@@ -5,14 +5,17 @@ describe AfrLoad do
         expect(AfrLoad::VERSION).not_to be nil
     end
 
-    it 'does something useful' do
-        afr = AfrLoad::AfrLoad.new()
-        #afr.get_schedule()
-        #afr.test
-
-        afr.get_schedule("/Users/iaia/work/src/ruby/gems/afr_load/lib/afr_load/afr_load.html")
-        afr.test
-
-        expect(afr).not_to be nil
+    context "" do
+        let(:afr){ AfrLoad::AfrLoad.new() }
+        it 'get schedule' do
+            document = afr.get_schedule()
+            expect(document).not_to eq ""
+        end
+        it 'can parse' do
+            document = afr.get_schedule()
+            afr.parse(document)
+            expect(afr.programs.length).not_to eq 0
+            #p afr.programs
+        end
     end
 end
