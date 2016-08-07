@@ -9,52 +9,56 @@ module AfrLoad
         def initialize()
             @programs = Array.new()
         end
-        def get_schedule(file_path = "")
-            if file_path == "" 
-                enum = Enumerator.new do |yielder|
-                    HTTPClient.get(AFR_LOAD_URL) do |chunk|
-                        yielder << chunk.force_encoding("utf-8")
-                    end
-                end
-                document = Oga.parse_html(enum)
+        def afr_load(file_path)
+            if file.blank?
+                document = get_schedule()
             else
-                puts file_path
-                handler = File.open(file_path)
-                document = Oga.parse_html(handler)
+                document = get_schedule_from_file(file_path)
             end
+            parse(document)
+        end
+        def get_schedule()
+            enum = Enumerator.new do |yielder|
+                HTTPClient.get(AFR_LOAD_URL) do |chunk|
+                    yielder << chunk.force_encoding("utf-8")
+                end
+            end
+            document = Oga.parse_html(enum)
+            parse(document)
+            return document
+        end
+        def get_schedule_from_file(file_path)
+            handler = File.open(file_path)
+            document = Oga.parse_html(handler)
+            parse(document)
             return document
         end
         def parse(document)
-            movies_node = document.xpath("//div[@id='contents']/div/table/tr/td/div/table")
-            movies_node.each do |tbody|
-                movie = Hash.new()
-                tds = tbody.xpath("tr")[1].xpath("td/p")
-                result = text_plastic(tds[0].text)
-                result = result.split("\r\n").compact.reject(&:empty?)
-                movie.store("日付", result[0])
-                movie.store("時間", result[1])
-                movie.store("HD", result[2])
-                movie.store("邦題", result[-2])
-                movie.store("原題", result[-1])
-                result = text_plastic(tds[1].text)
-                result = result.split("\r\n").compact.reject(&:empty?)
-                movie.store("公開時期", result[0].split("　")[0])
-                movie.store("製作国", result[0].split("　")[1])
-                result = text_plastic(tds[2].text)
-                result = result.split("\r\n").compact.reject(&:empty?)
-                movie.store("監督", result[0].gsub("（監督） ", ""))
-                movie.store("主演", result[1].gsub("（出演） ", ""))
-                movie.store("助演", result[2])
-                @programs.push(movie)
+            document.xpath("//div[@id='contents']/div").each do |contents_child|
+                if contents_child.attribute("id") == nil
+                    next
+                end
+                if not contents_child.attribute("id").value =~ /[0-9]{6}/
+                    next
+                end
+                # gogo_item
+                contents_child.xpath("//div/div[@class='gogo_item']").each do |movie_node|
+                    movie = Hash.new()
+                    movie.store("on_air_date", movie_node.at_xpath("span[contains(@class, 'g_day')]").text)
+                    data_block = movie_node.at_xpath("div[contains(@class, 'g_data_block')]")
+
+                    movie.store("title_ja", data_block.at_xpath("h3/span[@class='jp']").text)
+                    movie.store("title", data_block.at_xpath("h3/span[contains(@class, 'en')]").text)
+
+                    year_country = data_block.at_xpath("div/span[@class='g_country_year']").text.split("◆")
+                    movie.store("released_year", year_country[0])
+                    movie.store("released_country", year_country[1])
+
+                    movie.store("leading_actor", data_block.xpath("div/div/div[1]/span[2]").text)
+                    movie.store("released_country", data_block.xpath("div/div/div[2]/span[2]").text)
+                    @programs.push(movie)
+                end
             end
-        end
-        def text_plastic(text)
-            result = ""
-            text.each_line do |line|
-                line = line.gsub("  ", "")
-                result += line.gsub("             ", "")
-            end
-            return result
         end
     end
 end
