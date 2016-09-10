@@ -15,7 +15,7 @@ describe AfrLoad do
             document = afr.get_schedule()
             afr.parse(document)
             expect(afr.programs.length).not_to eq 0
-            #p afr.programs
+            p afr.programs
         end
     end
 end
