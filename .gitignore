@@ -9,3 +9,5 @@
 /tmp/
 /lib/afr_load/afr_load.html
 *.swp
+.DS_Store
+*/.DS_Store
