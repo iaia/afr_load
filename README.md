@@ -20,8 +20,18 @@ Or install it yourself as:
 
 ## Usage
 
-    AfrLoad::AfrLoad.get_schedule()
-
+    programs = AfrLoad::AfrLoad.get_schedule()
+    programs.each do |program|
+        program.show()
+        # program.on_air_date       #=> 放送日
+        # program.title_ja          #=> 邦題
+        # program.title             #=> 原題 
+        # program.released_year     #=> 公開年 
+        # program.released_country  #=> 公開国(製作国?) 
+        # program.leading_actor     #=> 主演俳優 
+        # program.leading_actor     #=> 主演俳優 
+        # program.supporting_actor  #=> 助演俳優 
+    end
 
 ## Development
 
