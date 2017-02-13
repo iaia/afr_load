@@ -4,7 +4,6 @@ require "oga"
 require "httpclient"
 
 require "afr_load/version"
-require "afr_load/tv_program"
 require "afr_load/parser.rb"
 
 module AfrLoad

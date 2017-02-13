@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require "afr_load/tv_program"
+
 module AfrLoad
     module Parser
         class << self
@@ -29,7 +31,7 @@ module AfrLoad
                 contents_child.xpath("//div/div[@class='gogo_item']").map do |movie_node|
                     data_block = movie_node.at_xpath("div[contains(@class, 'g_data_block')]")
                     year_country = data_block.at_xpath("div/span[@class='g_country_year']").text.split("◆")
-                    tv_program = TvProgram::TvProgram.new(
+                    tv_program = TvProgram.new(
                         on_air_date: movie_node.at_xpath("span[contains(@class, 'g_day')]").text,
                         title_ja: data_block.at_xpath("h3/span[@class='jp']").text,
                         title: data_block.at_xpath("h3/span[contains(@class, 'en')]").text ,

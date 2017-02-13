@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["iaia72160@gmail.com"]
 
   spec.summary       = %q{Web Scraping for 午後のロードショー}
-  spec.description   = %q{午後ローのスケジュールから、放送日、タイトル、映画に関する情報をハッシュ形式で取得します}
+  spec.description   = %q{午後ローのウェブスクレイピング。放送日、タイトル、映画に関する情報を取得します。}
   spec.homepage      = ""
   spec.license       = "MIT"
 
