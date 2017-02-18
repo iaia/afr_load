@@ -31,14 +31,16 @@ module AfrLoad
                 contents_child.xpath("//div/div[@class='gogo_item']").map do |movie_node|
                     data_block = movie_node.at_xpath("div[contains(@class, 'g_data_block')]")
                     year_country = data_block.at_xpath("div/span[@class='g_country_year']").text.split("◆")
+                    performer = data_block.xpath("div/div/div[2]/span[2]").text
                     tv_program = TvProgram.new(
                         on_air_date: movie_node.at_xpath("span[contains(@class, 'g_day')]").text,
                         title_ja: data_block.at_xpath("h3/span[@class='jp']").text,
                         title: data_block.at_xpath("h3/span[contains(@class, 'en')]").text ,
                         released_year: year_country[0],
                         released_country: year_country[1],
-                        leading_actor: data_block.xpath("div/div/div[1]/span[2]").text,
-                        supporting_actor: data_block.xpath("div/div/div[2]/span[2]").text
+                        movie_director: data_block.xpath("div/div/div[1]/span[2]").text,
+                        leading_actor: performer.split("／")[0],
+                        supporting_actor: performer.split("／")[1]
                     )
                 end
             end
