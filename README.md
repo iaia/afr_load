@@ -24,7 +24,7 @@ install it yourself as:
         # program.title             #=> 原題 
         # program.released_year     #=> 公開年 
         # program.released_country  #=> 公開国(製作国?) 
-        # program.leading_actor     #=> 主演俳優 
+        # program.movie_director    #=> 監督
         # program.leading_actor     #=> 主演俳優 
         # program.supporting_actor  #=> 助演俳優 
     end

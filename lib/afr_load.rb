@@ -19,8 +19,7 @@ module AfrLoad
 
         def get_schedule()
             @document = self.class.fetch_schedule(@url)
-            @programs = Parser.parse(@document).flatten
-            @programs
+            get_program()
         end
 
         def self.get_schedule(url = AFR_LOAD_URL)
@@ -28,9 +27,12 @@ module AfrLoad
             afr.get_schedule()
         end
 
-        def self.get_schedule_from_file(file_path)
-            handler = File.open(file_path)
-            document = Oga.parse_html(handler)
+        def get_schedule_from_file(file_handler)
+            @document = Oga.parse_html(file_handler)
+        end
+
+        def get_program
+            @programs = Parser.parse(@document).flatten
         end
 
         def self.fetch_schedule(url = AFR_LOAD_URL)
