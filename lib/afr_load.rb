@@ -2,8 +2,8 @@
 
 require "oga"
 require "httpclient"
-require "byebug"
 
+Bundler.require(:default, :development)
 require "afr_load/version"
 require "afr_load/parser.rb"
 
