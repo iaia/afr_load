@@ -2,45 +2,41 @@
 
 require "oga"
 require "httpclient"
+require "byebug"
 
 require "afr_load/version"
 require "afr_load/parser.rb"
 
 module AfrLoad
     class AfrLoad
-        attr_reader :url, :programs, :document
-
         AFR_LOAD_URL = "http://www.tv-tokyo.co.jp/telecine/oa_afr_load/"
 
-        def initialize(url = AFR_LOAD_URL)
+        attr_accessor :url 
+        attr_reader :programs, :document
+
+        def initialize()
+            @url = AFR_LOAD_URL
             @programs = Array.new()
-            @url = url
+            yield(self) if block_given?
+        end
+
+        def self.get_schedule()
+            afr = self.new()
+            afr.get_schedule()
+            afr.get_program()
         end
 
         def get_schedule()
-            @document = self.class.fetch_schedule(@url)
-            get_program()
-        end
-
-        def self.get_schedule(url = AFR_LOAD_URL)
-            afr = self.new(url)
-            afr.get_schedule()
-        end
-
-        def get_schedule_from_file(file_handler)
-            @document = Oga.parse_html(file_handler)
+            if @url.start_with?("http")
+                body = HTTPClient.get(@url).body.force_encoding("utf-8")
+            else
+                body = File.open(@url).read
+            end
+            @document = Oga.parse_html(body)
         end
 
         def get_program
             @programs = Parser.parse(@document).flatten
-        end
-
-        def self.fetch_schedule(url = AFR_LOAD_URL)
-            Oga.parse_html(Enumerator.new do |yielder|
-                HTTPClient.get(url) do |chunk|
-                    yielder << chunk.force_encoding("utf-8")
-                end
-            end)
         end
     end
 end

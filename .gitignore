@@ -11,4 +11,4 @@
 *.swp
 .DS_Store
 */.DS_Store
-./spec/index.html
+spec/*.html
