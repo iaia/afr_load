@@ -8,7 +8,7 @@ module AfrLoad
       def parse(document)
         month_lineup_doc = get_month_lineup(document)
         month_lineup_doc.map do |lineup|
-          parse_month_lineup(lineup)
+          parse_month_lineup(lineup).compact
         end
       end
 
@@ -30,7 +30,12 @@ module AfrLoad
       def parse_month_lineup(contents_child)
         contents_child.xpath("//div/div[@class='gogo_item']").map do |movie_node|
           data_block = movie_node.at_xpath("div[contains(@class, 'g_data_block')]")
-          year_country = data_block.at_xpath("div/span[@class='g_country_year']").text.split("◆")
+          if data_block.at_xpath("h3/span[@class='jp']").text == "放送内容未定"
+            puts "放送内容未定"
+            next
+          end
+          year_country = data_block.at_xpath("div/span[@class='g_country_year']")
+          year_country = year_country.text.split("◆")
           performer = data_block.xpath("div/div/div[2]/span[2]").text
           tv_program = TvProgram.new do |info|
             #<div class="gogo_item" data-oaStart="2017053113350000" data-oaEnd="2017053115400000">
