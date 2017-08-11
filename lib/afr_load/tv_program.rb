@@ -14,12 +14,16 @@ module AfrLoad
     end
 
     def show()
-      instance_variables.each do |var|
+      puts values
+    end
+
+    def values
+      vals = instance_variables.each.map do |var|
         k = var.to_s.tr("@","")
         v = instance_variable_get(var)
-        print "#{k}: #{v}, "
+        "#{k}: #{v}"
       end
-      puts
+      vals.join(", ")
     end
   end
 end
